@@ -3,16 +3,20 @@
 #include <math.h>
 #include <stdlib.h>
 
-void fetch_data(float (&u)[2][2], float *vec, char* filename)
+float *fetch_data(float (&u)[2][2], char* filename, int &qno, int &vec_length)
 {
     FILE *file;
+    bool bfirst = true;
     file = fopen(filename, "r");
     int i, j;
+    char c;
     float rvar;
+    float *local;
+    float *vec;
     if (file == NULL)
     {
         printf("File Not Found!");
-        return;
+        return vec;
     }
     
     // Read the U matrix
@@ -20,25 +24,58 @@ void fetch_data(float (&u)[2][2], float *vec, char* filename)
     fscanf(file, "%f %f", &u[1][0], &u[1][1]);
 
     // Read the vector 
+    i = 0;
     while (fscanf(file, "%f", &rvar) == 1)
     {
-        
+        if (bfirst)
+        {
+            local = (float *) malloc (sizeof(float));
+            local[i] = rvar;
+            i++;
+            bfirst = false;
+        }
+        else
+        {
+            local = (float *) realloc (local, (i+1)*sizeof(float));
+            local[i] = rvar;
+            i++;
+        }
     }
+    
+    qno = (int) local[i-1];
+    vec = (float *) malloc ((i-1) * sizeof(float));
+    vec_length = (i - 1);    
 
-    printf("%f %f %f %f\n", u[0][0], u[0][1], u[1][0], u[1][1]);
-   
+    for (j = 0; j < i-1; j++)
+    {
+        vec[j] = local[j];
+
+    }
+    /*for (int j = 0; j < vec_length; j++)
+    {
+        printf("%f\n", vec[j]);
+    }*/
+    free(local);
+    return vec;
 }
 
 int main(int argc, char *argv[]){
     float u[2][2];
-    float *vec;
-
+    
+    int qno, vec_length;
     char* filename = argv[1];
+
     printf("%s\n", filename);
-    printf("%f\n", u[0][0]);
-    fetch_data(u, vec, filename);
-    //u[0][1] += 1.33;
-    printf("%f %f %f %f\n", u[0][0], u[0][1], u[1][0], u[1][1]);
+    
+    float *vec = fetch_data(u, filename, qno, vec_length);
+
+    for (int j = 0; j < vec_length; j++)
+    {
+        printf("%f\n", vec[j]);
+    }
+    
+    printf("%f %f %f %f %d %d\n", u[0][0], u[0][1], u[1][0], u[1][1], qno, vec_length);
+    free(vec);
     return 1;
 
 }
