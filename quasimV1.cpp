@@ -3,7 +3,7 @@
 #include <math.h>
 #include <stdlib.h>
 
-float *fetch_data(float (&u)[2][2], char* filename, int &qno, int &vec_length)
+float *fetch_data(float u[4], char* filename, int &qno, int &vec_length)
 {
     FILE *file;
     bool bfirst = true;
@@ -20,8 +20,8 @@ float *fetch_data(float (&u)[2][2], char* filename, int &qno, int &vec_length)
     }
     
     // Read the U matrix
-    fscanf(file, "%f %f", &u[0][0], &u[0][1]);
-    fscanf(file, "%f %f", &u[1][0], &u[1][1]);
+    fscanf(file, "%f %f", &u[0], &u[1]);
+    fscanf(file, "%f %f", &u[2], &u[3]);
 
     // Read the vector 
     i = 0;
@@ -59,8 +59,17 @@ float *fetch_data(float (&u)[2][2], char* filename, int &qno, int &vec_length)
     return vec;
 }
 
+void quantum_gate_multiply(float u[4], float* vec, float* op, int qno, int vec_length)
+{
+    /*for (int j = 0; j < vec_length; j++)
+    {
+        printf("%f\n", vec[j]);
+    }
+    printf("%f %f %f %f %d\n", u[0], u[1], u[2], u[3], vec_length);*/
+}
+
 int main(int argc, char *argv[]){
-    float u[2][2];
+    float u[4];
     
     int qno, vec_length;
     char* filename = argv[1];
@@ -68,13 +77,16 @@ int main(int argc, char *argv[]){
     printf("%s\n", filename);
     
     float *vec = fetch_data(u, filename, qno, vec_length);
+    float *op = new float[vec_length];
 
-    for (int j = 0; j < vec_length; j++)
+    /*for (int j = 0; j < vec_length; j++)
     {
         printf("%f\n", vec[j]);
-    }
+    }*/
+
+    quantum_gate_multiply(u, vec, op, vec_length);
     
-    printf("%f %f %f %f %d %d\n", u[0][0], u[0][1], u[1][0], u[1][1], qno, vec_length);
+
     free(vec);
     return 1;
 
