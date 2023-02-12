@@ -59,7 +59,7 @@ float *fetch_data(float u[4], char* filename, int &qno, int &vec_length)
     return vec;
 }
 
-void quantum_gate_multiply(float* u, float* vec, float* op, int qno, int vec_length)
+void quantum_gate_multiply(float* u, float* vec, float* op, int qno, int vec_length, int pw, int mask, int antimask)
 {
     /*for (int j = 0; j < vec_length; j++)
     {
@@ -67,17 +67,11 @@ void quantum_gate_multiply(float* u, float* vec, float* op, int qno, int vec_len
     }
     printf("%f %f %f %f %d\n", u[0], u[1], u[2], u[3], vec_length);*/
 
-    int mask = 0;
-    int pw = (int)(log(vec_length)/log(2));
-    int antimask = (int)(pow(2, (pw - 1)) - 1);
+    // int mask = 0;
+    
     int idx1, idx2;
 
-    for (int i = 0; i < qno; i++)
-    {
-        mask = ((mask << 1) | 1);
-    }
-
-    antimask = (antimask & (~mask));
+    
 
     for (int i = 0; i < (int)(pow(2, (pw - 1))); i++)
     {
@@ -104,12 +98,23 @@ int main(int argc, char *argv[]){
     float *vec = fetch_data(u, filename, qno, vec_length);
     float *op = new float[vec_length];
 
+    int mask = 0;
+    int pw = (int)(log(vec_length)/log(2));
+    int antimask = (int)(pow(2, (pw - 1)) - 1);
+    
+    for (int i = 0; i < qno; i++)
+    {
+        mask = ((mask << 1) | 1);
+    }
+
+    antimask = (antimask & (~mask));
+
     /*for (int j = 0; j < vec_length; j++)
     {
         printf("%f\n", vec[j]);
     }*/
 
-    quantum_gate_multiply(u, vec, op, qno, vec_length);
+    quantum_gate_multiply(u, vec, op, qno, vec_length, pw, mask, antimask);
     
     for (int j = 0; j < vec_length; j++)
     {
