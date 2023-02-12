@@ -59,13 +59,38 @@ float *fetch_data(float u[4], char* filename, int &qno, int &vec_length)
     return vec;
 }
 
-void quantum_gate_multiply(float u[4], float* vec, float* op, int qno, int vec_length)
+void quantum_gate_multiply(float* u, float* vec, float* op, int qno, int vec_length)
 {
     /*for (int j = 0; j < vec_length; j++)
     {
         printf("%f\n", vec[j]);
     }
     printf("%f %f %f %f %d\n", u[0], u[1], u[2], u[3], vec_length);*/
+
+    int mask = 0;
+    int pw = (int)(log(vec_length)/log(2));
+    int antimask = (int)(pow(2, (pw - 1)) - 1);
+    int idx1, idx2;
+
+    for (int i = 0; i < qno; i++)
+    {
+        mask = ((mask << 1) | 1);
+    }
+
+    antimask = (antimask & (~mask));
+
+    for (int i = 0; i < (int)(pow(2, (pw - 1))); i++)
+    {
+        idx1 = (i & mask) | ((i & antimask) << 1);
+        idx2 = (idx1 | (1 << qno));
+        //printf("i - %d, %d, %d\n", i, idx1, idx2);
+        op[idx1] = u[0] * vec[idx1] + u[1] * vec[idx2];
+        op[idx2] = u[2] * vec[idx1] + u[3] * vec[idx2];
+    }
+
+    // printf("%d %d %f %d %d\n", pw, qno, u[3], antimask, mask);
+
+    
 }
 
 int main(int argc, char *argv[]){
@@ -74,7 +99,7 @@ int main(int argc, char *argv[]){
     int qno, vec_length;
     char* filename = argv[1];
 
-    printf("%s\n", filename);
+    //printf("%s\n", filename);
     
     float *vec = fetch_data(u, filename, qno, vec_length);
     float *op = new float[vec_length];
@@ -84,8 +109,12 @@ int main(int argc, char *argv[]){
         printf("%f\n", vec[j]);
     }*/
 
-    quantum_gate_multiply(u, vec, op, vec_length);
+    quantum_gate_multiply(u, vec, op, qno, vec_length);
     
+    for (int j = 0; j < vec_length; j++)
+    {
+        printf("%.3f\n", op[j]);
+    }
 
     free(vec);
     return 1;
