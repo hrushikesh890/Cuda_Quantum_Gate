@@ -153,9 +153,14 @@ int main(int argc, char *argv[])
     //vectorAdd<<<blocksPerGrid, threadsPerBlock>>>(d_A, d_B, d_C, numElements);
 
     //quantum_gate_multiply(u, vec, op, qno, vec_length, pw, mask, antimask);
+
+    struct timeval begin, end; 
+    gettimeofday (&begin, NULL);
     
     quantum_gate_multiply<<<blocksPerGrid, threadsPerBlock>>>(d_u, d_vec, d_op, qno, vec_length, pw, mask, antimask);
     
+    gettimeofday (&end, NULL);
+
     err = cudaGetLastError();
 
     if (err != cudaSuccess)
@@ -200,6 +205,9 @@ int main(int argc, char *argv[])
         fprintf(stderr, "Failed to free device vector C (error code %s)!\n", cudaGetErrorString(err));
         exit(EXIT_FAILURE);
     }
+
+    int time_in_us = 1e6 * (end.tv_sec - begin.tv_sec) + (end.tv_usec - begin.tv_usec);
+    printf("Time - %d", time_in_us);
 
     free(op);
     free(vec);

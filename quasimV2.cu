@@ -122,9 +122,6 @@ int main(int argc, char *argv[])
 
     antimask = (antimask & (~mask));
 
-    
-    
-
     int threadsPerBlock = 8;
     int blocksPerGrid =((vec_length/2) + threadsPerBlock - 1) / threadsPerBlock;
     
@@ -133,13 +130,21 @@ int main(int argc, char *argv[])
 
     //quantum_gate_multiply(u, vec, op, qno, vec_length, pw, mask, antimask);
     
+    struct timeval begin, end; 
+    gettimeofday (&begin, NULL);
+
     quantum_gate_multiply<<<blocksPerGrid, threadsPerBlock>>>(u, vec, op, qno, vec_length, pw, mask, antimask);
     cudaDeviceSynchronize();
+    gettimeofday (&end, NULL);
+
     //printf("%d\n", vec_length);
     for (int j = 0; j < vec_length; j++)
     {
         printf("%.3f\n", op[j]);
     }
+
+    int time_in_us = 1e6 * (end.tv_sec - begin.tv_sec) + (end.tv_usec - begin.tv_usec);
+    printf("Time - %d", time_in_us);
 
     free(vec1);
     //free(op);
