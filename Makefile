@@ -1,2 +1,8 @@
-/bin/nvcc quasimV1.cu -o quamsimV1
-/bin/nvcc quasimV2.cu -o quamsimV2
+all:	program1	program2
+
+program1:	quasimV1.cu
+	nvcc	-o	quamsimV1	quasimV1.cu
+
+program2: quasimV2.cu
+	nvcc -o quamsimV2 quasimV1.cu
+
