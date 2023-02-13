@@ -2,6 +2,7 @@
 #include <cuda_runtime.h>
 #include <math.h>
 #include <stdlib.h>
+#include <sys/time.h>
 
 float *fetch_data(float u[4], char* filename, int &qno, int &vec_length)
 {
@@ -122,7 +123,7 @@ int main(int argc, char *argv[])
 
     antimask = (antimask & (~mask));
 
-    int threadsPerBlock = 8;
+    int threadsPerBlock = 256;
     int blocksPerGrid =((vec_length/2) + threadsPerBlock - 1) / threadsPerBlock;
     
     //printf("CUDA kernel launch with %d blocks of %d threads\n", blocksPerGrid, threadsPerBlock);
