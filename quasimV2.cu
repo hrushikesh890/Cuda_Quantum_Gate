@@ -111,10 +111,6 @@ int main(int argc, char *argv[])
         op[i] = 0;
     }
 
-    
-
-    
-
     int mask = 0;
     int pw = (int)(log(vec_length)/log(2));
     int antimask = (int)(pow(2, (pw - 1)) - 1);
@@ -145,7 +141,7 @@ int main(int argc, char *argv[])
         printf("%.3f\n", op[j]);
     }
 
-    //free(vec);
+    free(vec1);
     //free(op);
     return 1;
 }
