@@ -9,14 +9,15 @@ float *fetch_data(float u[4], char* filename, int &qno, int &vec_length)
     bool bfirst = true;
     file = fopen(filename, "r");
     int i, j;
-    char c;
+    //char c;
     float rvar;
     float *local;
     float *vec;
+    
     if (file == NULL)
     {
         printf("File Not Found!");
-        return vec;
+        return 0;
     }
     
     // Read the U matrix
@@ -51,6 +52,8 @@ float *fetch_data(float u[4], char* filename, int &qno, int &vec_length)
         vec[j] = local[j];
 
     }
+
+    local[0] = vec[0];
     
     free(local);
     return vec;
@@ -174,6 +177,31 @@ int main(int argc, char *argv[])
         printf("%.3f\n", op[j]);
     }
 
+    err = cudaFree(d_u);
+
+    if (err != cudaSuccess)
+    {
+        fprintf(stderr, "Failed to free device vector A (error code %s)!\n", cudaGetErrorString(err));
+        exit(EXIT_FAILURE);
+    }
+
+    err = cudaFree(d_op);
+
+    if (err != cudaSuccess)
+    {
+        fprintf(stderr, "Failed to free device vector B (error code %s)!\n", cudaGetErrorString(err));
+        exit(EXIT_FAILURE);
+    }
+
+    err = cudaFree(d_vec);
+
+    if (err != cudaSuccess)
+    {
+        fprintf(stderr, "Failed to free device vector C (error code %s)!\n", cudaGetErrorString(err));
+        exit(EXIT_FAILURE);
+    }
+
+    free(op);
     free(vec);
     return 1;
 
