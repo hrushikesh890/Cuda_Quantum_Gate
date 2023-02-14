@@ -145,7 +145,7 @@ int main(int argc, char *argv[])
     }
 
     int time_in_us = 1e6 * (end.tv_sec - begin.tv_sec) + (end.tv_usec - begin.tv_usec);
-    printf("Time - %d\n", time_in_us);
+    //printf("Time - %d\n", time_in_us);
 
     free(vec1);
     //free(op);

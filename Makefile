@@ -6,3 +6,6 @@ program1:	quasimV1.cu
 program2: quasimV2.cu
 	nvcc -o quamsimV2 quasimV1.cu
 
+clean:
+	rm quamsimV1 quamsimV2
+
